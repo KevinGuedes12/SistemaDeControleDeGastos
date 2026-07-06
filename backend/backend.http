@@ -1,6 +1,24 @@
 @backend_HostAddress = http://localhost:5085
 
-GET {{backend_HostAddress}}/weatherforecast/
+GET {{backend_HostAddress}}/api/pessoas
 Accept: application/json
 
 ###
+
+POST {{backend_HostAddress}}/api/pessoas
+Content-Type: application/json
+
+{
+  "nome": "Ana",
+  "idade": 32
+}
+
+###
+
+GET {{backend_HostAddress}}/api/transacoes
+Accept: application/json
+
+###
+
+GET {{backend_HostAddress}}/api/totais
+Accept: application/json
