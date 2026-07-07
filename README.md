@@ -1,78 +1,125 @@
 # Sistema de Controle de Gastos Residenciais
 
-Aplicacao full-stack para cadastrar pessoas, registrar receitas/despesas e consultar totais por pessoa e totais gerais. O back-end usa ASP.NET Core Web API com Entity Framework Core e SQLite local. O front-end usa React com TypeScript via Vite.
+Projeto desenvolvido como desafio técnico.
 
-## Requisitos
+O sistema permite cadastrar pessoas, registrar receitas e despesas e consultar os totais por pessoa e o total geral.
 
-- .NET SDK 10
-- Node.js 24 ou superior
-- npm
+## Tecnologias utilizadas
 
-No PowerShell deste ambiente, use `npm.cmd` caso a execucao de scripts bloqueie `npm`.
+### Back-end
+- ASP.NET Core Web API
+- Entity Framework Core
+- SQLite
 
-## Como rodar o back-end
+### Front-end
+- React
+- TypeScript
+- Vite
 
-```powershell
-dotnet restore backend\backend.csproj
-dotnet run --project backend\backend.csproj --launch-profile http
+## Como executar o projeto
+
+### Back-end
+
+Na pasta do projeto execute:
+
+```bash
+dotnet restore
+dotnet run --project backend/backend.csproj
 ```
 
-A API ficara em:
+A API ficará disponível em:
 
-- `http://localhost:5085`
-- Swagger: `http://localhost:5085/swagger`
+```
+http://localhost:5085
+```
 
-O banco SQLite e criado automaticamente em `backend/controle-gastos.db` quando a API inicia. As migrations tambem sao aplicadas automaticamente na inicializacao.
+Swagger:
 
-## Como rodar o front-end
+```
+http://localhost:5085/swagger
+```
 
-```powershell
+O banco de dados SQLite é criado automaticamente na primeira execução.
+
+---
+
+### Front-end
+
+Entre na pasta do frontend e execute:
+
+```bash
 cd frontend
-npm.cmd install
-npm.cmd run dev
+npm install
+npm run dev
 ```
 
-O front-end ficara em `http://localhost:5173` e consome a API em `http://localhost:5085/api`.
+O projeto ficará disponível em:
 
-Para apontar para outra URL de API, crie um arquivo `frontend/.env` com:
+```
+http://localhost:5173
+```
+
+Caso seja necessário alterar a URL da API, crie um arquivo `.env` dentro da pasta `frontend` com:
 
 ```env
 VITE_API_URL=http://localhost:5085/api
 ```
 
-## Como resetar o banco
+## Funcionalidades
 
-Pare o back-end e remova os arquivos SQLite locais:
+- Cadastro de pessoas
+- Exclusão de pessoas
+- Cadastro de receitas e despesas
+- Listagem das transações
+- Consulta do total por pessoa
+- Consulta do total geral
 
-```powershell
-Remove-Item backend\controle-gastos.db,backend\controle-gastos.db-shm,backend\controle-gastos.db-wal -ErrorAction SilentlyContinue
+## Regras de negócio
+
+- Pessoas menores de 18 anos podem registrar apenas despesas.
+- Antes de cadastrar uma transação é validado se a pessoa existe.
+- Ao excluir uma pessoa, suas transações também são removidas.
+
+## Endpoints
+
+### Pessoas
+
+```
+GET    /api/pessoas
+POST   /api/pessoas
+DELETE /api/pessoas/{id}
 ```
 
-Ao iniciar a API novamente, o banco sera recriado pelas migrations.
+### Transações
 
-## Endpoints principais
-
-- `GET /api/pessoas`
-- `POST /api/pessoas`
-- `DELETE /api/pessoas/{id}`
-- `GET /api/transacoes`
-- `POST /api/transacoes`
-- `GET /api/totais`
-
-## Decisoes tecnicas
-
-- A regra de menor de idade fica em `TransacaoService`: pessoas com idade menor que 18 podem registrar apenas `Despesa`; tentativa de `Receita` retorna `400 Bad Request`.
-- A existencia de `PessoaId` e validada antes de criar transacoes; pessoa inexistente retorna `404 Not Found`.
-- A delecao em cascata de transacoes foi configurada via EF Core em `AppDbContext` com `DeleteBehavior.Cascade`.
-- O SQLite local nao e versionado. O `.gitignore` bloqueia arquivos `.db`, `bin/`, `obj/`, `node_modules/` e builds do Vite.
-- A API retorna erros em um formato simples com `mensagem` e, para validacoes de modelo, `detalhes`.
-- O front-end usa `fetch` encapsulado em `src/api.ts`, com exibicao de erros no topo da tela ativa.
-
-## Comandos de verificacao
-
-```powershell
-dotnet build backend\backend.csproj
-cd frontend
-npm.cmd run build
-npm.cmd run lint
 ```
+GET    /api/transacoes
+POST   /api/transacoes
+```
+
+### Totais
+
+```
+GET    /api/totais
+```
+
+## Build
+
+Back-end:
+
+```bash
+dotnet build backend/backend.csproj
+```
+
+Front-end:
+
+```bash
+npm run build
+npm run lint
+```
+
+## Observações
+
+O projeto utiliza SQLite como banco de dados local.
+
+Caso queira reiniciar o banco, basta excluir o arquivo `controle-gastos.db` da pasta `backend` e executar o projeto novamente.
